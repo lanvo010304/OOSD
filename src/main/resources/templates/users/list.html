@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danh sách người dùng - Mạng xã hội đơn giản</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">Mạng xã hội đơn giản</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Trang chủ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/posts">Bài viết của tôi</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/users">Người dùng</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/users/following">Đang theo dõi</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">Đăng xuất</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <h2>Danh sách người dùng</h2>
+
+        <div class="alert alert-info" th:if="${users.isEmpty()}">
+            Không có người dùng nào.
+        </div>
+
+        <div class="row" th:unless="${users.isEmpty()}">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body p-0">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Tên người dùng</th>
+                                    <th scope="col">Ngày tham gia</th>
+                                    <th scope="col">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="user : ${users}">
+                                    <td th:text="${user.username}"></td>
+                                    <td th:text="${#temporals.format(user.createdAt, 'dd/MM/yyyy')}"></td>
+                                    <td>
+                                        <div th:if="${currentUser.id != user.id}">
+                                            <form th:if="${user.followers.size() < 2}" th:action="@{/users/{id}/follow(id=${user.id})}" method="post" style="display: inline;">
+                                                <button type="submit" class="btn btn-sm btn-primary">Follow</button>
+                                            </form>
+                                            <form th:if="${user.followers.size() >= 2}" th:action="@{/users/{id}/unfollow(id=${user.id})}" method="post" style="display: inline;">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger">Unfollow</button>
+                                            </form>
+                                        </div>
+                                        <span th:if="${currentUser.id == user.id}" class="badge bg-secondary">Bạn</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 
